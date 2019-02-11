@@ -1,26 +1,23 @@
-import sys, math
 import random
-from PyQt5 import uic
 import sys
-from PyQt5.QtWidgets import QApplication, QWidget, QInputDialog, QLineEdit, QFileDialog
-from PyQt5.QtGui import QIcon
-from PyQt5 import QtCore, QtGui, QtWidgets, QtMultimedia
-from PyQt5.QtGui import QImage, QPalette, QBrush
-from PyQt5.QtCore import QSize
+from PyQt5.QtWidgets import QFileDialog
+from PyQt5 import QtWidgets
 from librosa import beat as bt
-from PyQt5.QtWidgets import QApplication, QWidget, QPushButton, QButtonGroup, QLabel
+from PyQt5.QtWidgets import QWidget, QPushButton, QButtonGroup, QLabel
 import librosa
 import pygame
 from time import sleep as pause
 
 file = ''
-class App(QWidget):
+clock = pygame.time.Clock()
+class File(QWidget):
 
 
     def __init__(self):
         super().__init__()
+        global file
 
-
+        self.file = file
         self.title = 'Choose file'
         self.left = 10
         self.top = 10
@@ -38,8 +35,8 @@ class App(QWidget):
 
     def openFileNameDialog(self):
         pass
+        global file
         options = QFileDialog.Options()
-
 
         options |= QFileDialog.DontUseNativeDialog
         fileName, _ = QFileDialog.getOpenFileName(self, "Choose file", "",
@@ -48,7 +45,9 @@ class App(QWidget):
             file = fileName
             self.close()
 
+
 class MyWidget(QWidget):
+    pass
     def __init__(self):
         super().__init__()
         self.initUI()
@@ -63,8 +62,8 @@ class MyWidget(QWidget):
 
     def initUI(self):
         self.sv_but = QPushButton('Open file', self)
-        self.sv_but.resize(100, 40)
-        self.sv_but.move(30, 250)
+        self.sv_but.resize(100, 100)
+        self.sv_but.move(30, 100)
 
         self.btn_grp = QButtonGroup()
         self.btn_grp.setExclusive(True)
@@ -73,8 +72,8 @@ class MyWidget(QWidget):
         self.btn_grp.buttonClicked.connect(self.opn_file)
 
         self.start = QPushButton('Start', self)
-        self.start.resize(80, 60)
-        self.start.move(30, 100)
+        self.start.resize(80, 30)
+        self.start.move(30, 50)
         self.start.clicked.connect(self.Konvert)
         self.show()
 
@@ -83,10 +82,12 @@ class MyWidget(QWidget):
         self.laba.move(200, 130)
 
     def opn_file(self):
-        qwer = App()
-        #self.msc = file
-        #self.y, self.sr = librosa.core.load(self.msc)
-        #self.tempo, self.beats = bt.beat_track(y=self.y, sr=self.sr)
+        qwer = File()
+        self.msc = file
+        print(self.msc)
+        self.y, self.sr = librosa.core.load(self.msc)
+        self.tempo, self.beats = bt.beat_track(y=self.y, sr=self.sr)
+        print('loading complete')
         return qwer
 
     def Konvert(self):
@@ -94,28 +95,27 @@ class MyWidget(QWidget):
         self.size = width, height = 1080, 900
         self.screen = pygame.display.set_mode((width, height))
         while True:
-            for event in pygame.event.get():
-                pass
-            self.pulsating()
-
+            pygame.draw.circle(self.screen, self.change_color(self.tempo), (540, 450), 10)
+            clock.tick(100)
             pygame.display.flip()
 
     def draw_poly(self, size):
-        self.polygon = pygame.draw.circle(self.screen, (255, 0, 0), (540, 450), size)
-        pause(0.2)
+        pygame.draw.circle(self.screen, self.change_color(self.tempo), (540, 450), size)
+        #pause(0.2)
 
     def pulsating(self):
-        self.draw_poly(200)
-        self.draw_poly(225)
-        self.draw_poly(250)
-        self.draw_poly(275)
-        self.draw_poly(230)
-        self.draw_poly(275)
-        self.draw_poly(250)
-        self.draw_poly(225)
-        self.polygon = self.createPoly(100, 200, 0)
+        self.draw_poly(50)
+        self.draw_poly(55)
+        self.draw_poly(60)
+        self.draw_poly(65)
+        self.draw_poly(70)
+        self.draw_poly(65)
+        self.draw_poly(60)
+        self.draw_poly(55)
+        self.draw_poly(50)
 
     def change_color(self, temp):
+        return 255, 0, 0
         r, g, b = self.r, self.g, self.b
         if 60 <= temp < 100:
             if r == 0 or g == 0 or b == 0:
