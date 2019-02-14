@@ -99,8 +99,8 @@ class MyWidget(QWidget):
         pygame.init()
         self.size = width, height = 1080, 900
         screen = pygame.display.set_mode((width, height))
-        #pygame.mixer_music.load(self.msc)
-       # pygame.mixer_music.play()
+        pygame.mixer_music.load(self.msc)
+        pygame.mixer_music.play()
         running = True
         while running:
             for event in pygame.event.get():
