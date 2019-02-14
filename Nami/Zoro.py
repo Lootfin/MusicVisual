@@ -10,6 +10,7 @@ from time import sleep as pause
 
 file = ''
 clock = pygame.time.Clock()
+pygame.init()
 class File(QWidget):
 
 
@@ -51,19 +52,19 @@ class MyWidget(QWidget):
     def __init__(self):
         super().__init__()
         self.initUI()
-        self.r = 1
-        self.g = 1
-        self.b = 1
+        self.r = 255
+        self.g = 255
+        self.b = 255
 
-        self.setGeometry(600, 400, 600, 400)
+        self.setGeometry(120, 160, 120, 160)
         self.setWindowTitle('Конвертер')
         self.setBackgroundRole(10)
         self.move(150, 0)
 
     def initUI(self):
         self.sv_but = QPushButton('Open file', self)
-        self.sv_but.resize(100, 100)
-        self.sv_but.move(30, 100)
+        self.sv_but.resize(100, 50)
+        self.sv_but.move(10, 10)
 
         self.btn_grp = QButtonGroup()
         self.btn_grp.setExclusive(True)
@@ -72,14 +73,18 @@ class MyWidget(QWidget):
         self.btn_grp.buttonClicked.connect(self.opn_file)
 
         self.start = QPushButton('Start', self)
-        self.start.resize(80, 30)
-        self.start.move(30, 50)
+        self.start.resize(100, 50)
+        self.start.move(10, 70)
         self.start.clicked.connect(self.Konvert)
         self.show()
+
 
         self.laba = QLabel(self)
         self.laba.setText('filename')
         self.laba.move(200, 130)
+
+        self.bush = True
+        self.sizer = 100
 
     def opn_file(self):
         qwer = File()
@@ -93,9 +98,17 @@ class MyWidget(QWidget):
     def Konvert(self):
         pygame.init()
         self.size = width, height = 1080, 900
-        self.screen = pygame.display.set_mode((width, height))
-        while True:
-            pygame.draw.circle(self.screen, self.change_color(self.tempo), (540, 450), 10)
+        screen = pygame.display.set_mode((width, height))
+        #pygame.mixer_music.load(self.msc)
+       # pygame.mixer_music.play()
+        running = True
+        while running:
+            for event in pygame.event.get():
+                if event.type == pygame.QUIT:
+                    running = False
+            screen.fill((0,0,0))
+            pygame.draw.circle(screen, (self.r, self.g, self.b), (540, 450), self.sizer)
+            self.pulsating()
             clock.tick(100)
             pygame.display.flip()
 
@@ -104,18 +117,15 @@ class MyWidget(QWidget):
         #pause(0.2)
 
     def pulsating(self):
-        self.draw_poly(50)
-        self.draw_poly(55)
-        self.draw_poly(60)
-        self.draw_poly(65)
-        self.draw_poly(70)
-        self.draw_poly(65)
-        self.draw_poly(60)
-        self.draw_poly(55)
-        self.draw_poly(50)
+        if self.sizer > 300 or self.sizer < 100:
+            self.bush = not self.bush
+            self.r, self.g, self.b = random.randint(0, 255), random.randint(0, 255), random.randint(0, 255)
+        if self.bush:
+            self.sizer += 5
+        else:
+            self.sizer -= 5
 
     def change_color(self, temp):
-        return 255, 0, 0
         r, g, b = self.r, self.g, self.b
         if 60 <= temp < 100:
             if r == 0 or g == 0 or b == 0:
